@@ -1,0 +1,1 @@
+Faces from the photos are cropped and aligned using pretrained MTCNN Face Detection model.
