@@ -86,7 +86,7 @@ vis.image(image[::-1, :, :], opts = {'title': 'result'}, win = "result")
 cv2.imwrite('./outputs/vis_demo_image.jpg', image.transpose([1,2,0]))
 
 if os.path.exists("./model_weights/G_recent.pth") and os.path.exists("./model_weights/D_recent.pth"):
-    start_batch = 40
+    start_batch = 3
     G.load_state_dict(torch.load(f"{model_save_path}G_recent.pth", map_location = device), strict = False)
     D.load_state_dict(torch.load(f"{model_save_path}D_recent.pth", map_location = device), strict = False)
 
@@ -126,7 +126,7 @@ for epoch in range(start_batch ,max_epoch):
         #weight of identity loss was increased to decrease time to train the model to produce identifiable images
         l_adv = 1
         l_attr = 10
-        l_id = 17
+        l_id = 10
         l_rec = 10
 
         loss_G = l_adv * L_adv + l_attr * L_attr + l_id * L_id + l_rec * L_rec
@@ -166,3 +166,5 @@ for epoch in range(start_batch ,max_epoch):
         if not iteration %1000:
             torch.save(G.state_dict(), f'{model_save_path}G_recent.pth')
             torch.save(D.state_dict(), f'{model_save_path}D_recent.pth')
+    torch.save(G.state_dict(), f'{model_save_path}G_recent.pth')
+    torch.save(D.state_dict(), f'{model_save_path}D_recent.pth')

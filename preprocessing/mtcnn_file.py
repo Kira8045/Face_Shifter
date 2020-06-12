@@ -6,6 +6,7 @@ from mtcnn.src.get_nets import PNet, ONet, RNet
 from mtcnn.src.box_utils import nms, calibrate_box, get_image_boxes, convert_to_square
 from mtcnn.src.first_stage import run_first_stage
 from mtcnn.src.align_trans import get_reference_facial_points, warp_and_crop_face
+import cv2
 device = torch.device("cuda")
 
 class MTCNN():
@@ -28,11 +29,18 @@ class MTCNN():
             boxes = boxes[:limit]
             landmarks = landmarks[:limit]
         faces = []
-        for landmark in landmarks:
-            facialpoints = [(landmark[j],landmark[j+5]) for j in range(5) ]
-            warped_face = warp_and_crop_face(np.array(img), facialpoints, self.reference, crop_size = crop_size)
+        # for landmark in landmarks:
+        #     facialpoints = [(landmark[j],landmark[j+5]) for j in range(5) ]
+        #     warped_face = warp_and_crop_face(np.array(img), facialpoints, self.reference, crop_size = crop_size)
+        #     faces.append(Image.fromarray(warped_face))
+
+        for bb in boxes:
+            bb = list(map(int, bb))
+            warped_face = np.asarray(img)
+            warped_face = warped_face[ bb[1]:bb[3],bb[0]:bb[2], :]
             faces.append(Image.fromarray(warped_face))
-        return faces
+
+        return faces, boxes
 
     def detect_faces(self, image, min_face_size=64.0,
                      thresholds=[0.6, 0.7, 0.8],
